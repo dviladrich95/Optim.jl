@@ -6,6 +6,7 @@ struct MomentumGradientDescent{Tf, IL,L} <: FirstOrderOptimizer
     alphaguess!::IL
     linesearch!::L
     manifold::Manifold
+    restart::Bool
 end
 
 Base.summary(::MomentumGradientDescent) = "Momentum Gradient Descent"
@@ -13,8 +14,9 @@ Base.summary(::MomentumGradientDescent) = "Momentum Gradient Descent"
 function MomentumGradientDescent(; mu::Real = 0.01,
                                  alphaguess = LineSearches.InitialPrevious(), # TODO: investigate good defaults
                                  linesearch = LineSearches.HagerZhang(),        # TODO: investigate good defaults
-                                 manifold::Manifold=Flat())
-    MomentumGradientDescent(mu, _alphaguess(alphaguess), linesearch, manifold)
+                                 manifold::Manifold=Flat(),
+                                 restart = false)
+    MomentumGradientDescent(mu, _alphaguess(alphaguess), linesearch, manifold, restart)
 end
 
 mutable struct MomentumGradientDescentState{Tx, T} <: AbstractOptimizerState
@@ -50,6 +52,11 @@ function update_state!(d, state::MomentumGradientDescentState, method::MomentumG
 
     # Update position, and backup current one
     state.x_momentum .= state.x .- state.x_previous
+
+    phi_restart = real(dot(state.s, state.x_momentum))
+    if method.restart && phi_restart < 0
+        state.x_momentum .= zero(state.x_momentum)
+    end
 
     # Determine the distance of movement along the search line
     lssuccess = perform_linesearch!(state, method, ManifoldObjective(method.manifold, d))

@@ -55,13 +55,13 @@ function perform_linesearch!(state, method, d)
 
     # Perform line search; catch LineSearchException to allow graceful exit
     try
-        state.alpha, ϕalpha =
+         state.alpha, ϕalpha =
             method.linesearch!(d, state.x, state.s, state.alpha,
                                state.x_ls, phi_0, dphi_0)
         return true # lssuccess = true
     catch ex
         if isa(ex, LineSearches.LineSearchException)
-            state.alpha = ex.alpha
+            @show state.alpha = ex.alpha
             # We shouldn't warn here, we should just carry it to the output
             # @warn("Linesearch failed, using alpha = $(state.alpha) and
             # exiting optimization.\nThe linesearch exited with message:\n$(ex.message)")
