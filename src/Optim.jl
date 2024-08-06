@@ -92,6 +92,8 @@ export optimize, maximize, # main function
        ### Acceleration methods
        AcceleratedGradientDescent,
        MomentumGradientDescent,
+       Adam,
+       AdaMax,
 
        ### Nonlinear GMRES
        NGMRES,
@@ -148,6 +150,8 @@ include("multivariate/solvers/first_order/bfgs.jl")
 include("multivariate/solvers/first_order/l_bfgs.jl")
 
 ## Acceleration methods
+include("multivariate/solvers/first_order/adamax.jl")
+include("multivariate/solvers/first_order/adam.jl")
 include("multivariate/solvers/first_order/accelerated_gradient_descent.jl")
 include("multivariate/solvers/first_order/momentum_gradient_descent.jl")
 
@@ -215,5 +219,15 @@ include("multivariate/solvers/constrained/ipnewton/utilities/trace.jl")
 
 # Maximization convenience wrapper
 include("maximize.jl")
+
+@static if !isdefined(Base, :get_extension)
+    include("../ext/OptimMOIExt.jl")
+    using .OptimMOIExt
+    const Optimizer = OptimMOIExt.Optimizer
+else
+    # declare this upfront so that the MathOptInterface extension can assign it
+    # without creating a new global
+    global Optimizer
+end
 
 end

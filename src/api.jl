@@ -49,6 +49,7 @@ function simplex_trace(r::MultivariateOptimizationResults)
     [ state.metadata["simplex"] for state in tr ]
 end
 function simplex_value_trace(r::MultivariateOptimizationResults)
+    tr = trace(r)
     if !isa(r.method, NelderMead)
         throw(ArgumentError("There are no simplex values involved in optimization using $(r.method). Please use f_trace(...) to grab the objective values from the trace."))
     end
@@ -133,6 +134,9 @@ abs_tol(r::UnivariateOptimizationResults) = r.abs_tol
 
 time_limit(r::MultivariateOptimizationResults) = r.time_limit
 time_run(  r::MultivariateOptimizationResults) = r.time_run
+
+time_limit(r::UnivariateOptimizationResults) = r.time_limit
+time_run(  r::UnivariateOptimizationResults) = r.time_run
 
 time_limit(r::OptimizationResults) = error("time_limit is not implemented for $(summary(r)).")
 time_run(  r::OptimizationResults) = error("time_run is not implemented for $(summary(r)).")

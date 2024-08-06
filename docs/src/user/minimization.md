@@ -152,7 +152,7 @@ If we want to manually specify this method, we use the usual syntax as for multi
     optimize(f, lower, upper, GoldenSection(); kwargs...)
 ```
 
-Keywords are used to set options for this special type of optimization. In addition to the `iterations`, `store_trace`, `show_trace` and `extended_trace` options, the following options are also available:
+Keywords are used to set options for this special type of optimization. In addition to the `iterations`, `store_trace`, `show_trace`, `show_warnings`, and `extended_trace` options, the following options are also available:
 
 * `rel_tol`: The relative tolerance used for determining convergence. Defaults to `sqrt(eps(T))`.
 * `abs_tol`: The absolute tolerance used for determining convergence. Defaults to `eps(T)`.
@@ -213,6 +213,12 @@ Defined for multivariate optimization:
 * `f_converged(res)`
 * `g_converged(res)`
 * `initial_state(res)`
+
+Defined for `NelderMead` with the option `trace_simplex=true`:
+
+* `centroid_trace(res)` (with `extended_trace=true`)
+* `simplex_trace(res)`
+* `simplex_values_trace(res)`
 
 ## Input types
 Most users will input `Vector`'s as their `initial_x`'s, and get an `Optim.minimizer(res)` out that is also a vector. For zeroth and first order methods, it is also possible to pass in matrices, or even higher dimensional arrays. The only restriction imposed by leaving the `Vector` case is, that it is no longer possible to use finite difference approximations or automatic differentiation. Second order methods (variants of Newton's method) do not support this more general input type.
